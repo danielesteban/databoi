@@ -78,7 +78,7 @@
     font-family: inherit;
     font-weight: inherit;
   }
-  :global(input[type="email"], input[type="text"], input[type="password"], textarea) {
+  :global(input[type="email"], input[type="text"], input[type="password"], select, textarea) {
     box-sizing: border-box;
     background-color: #111;
     padding: 0.5rem 1rem;

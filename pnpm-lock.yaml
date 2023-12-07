@@ -20,6 +20,9 @@ dependencies:
   plotly.js-cartesian-dist-min:
     specifier: ^2.27.1
     version: 2.27.1
+  regression:
+    specifier: ^2.0.1
+    version: 2.0.1
   sql.js:
     specifier: ^1.9.0
     version: 1.9.0
@@ -52,6 +55,9 @@ devDependencies:
   '@types/plotly.js':
     specifier: ^2.12.30
     version: 2.12.30
+  '@types/regression':
+    specifier: ^2.0.6
+    version: 2.0.6
   postcss:
     specifier: ^8.4.32
     version: 8.4.32
@@ -428,6 +434,10 @@ packages:
 
   /@types/pug@2.0.10:
     resolution: {integrity: sha512-Sk/uYFOBAB7mb74XcpizmH0KOR2Pv3D2Hmrh1Dmy5BmK3MpdSa5kqZcg6EKBdklU0bFXX9gCfzvpnyUehrPIuA==}
+    dev: true
+
+  /@types/regression@2.0.6:
+    resolution: {integrity: sha512-sa+sHOUxh9fywFuAFLCcyupFN0CKX654QUZGW5fAZCmV51I4e5nQy1xL2g/JMUW/PeDoF3Yq2lDXb7MoC3KDNg==}
     dev: true
 
   /@types/resolve@1.20.2:
@@ -1688,6 +1698,10 @@ packages:
     dependencies:
       picomatch: 2.3.1
     dev: true
+
+  /regression@2.0.1:
+    resolution: {integrity: sha512-A4XYsc37dsBaNOgEjkJKzfJlE394IMmUPlI/p3TTI9u3T+2a+eox5Pr/CPUqF0eszeWZJPAc6QkroAhuUpWDJQ==}
+    dev: false
 
   /resolve-from@5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}

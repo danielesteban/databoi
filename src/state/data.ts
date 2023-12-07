@@ -42,10 +42,10 @@ db.worker.onmessage = db.onmessage.bind(db);
 
 let current: { aborted: boolean } = { aborted: false };
 query.subscribe(($query) => {
-  current.aborted = true;
   if (!$query) {
     return;
   }
+  current.aborted = true;
   const controller = { aborted: false };
   current = controller;
   db

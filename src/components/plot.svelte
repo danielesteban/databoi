@@ -12,6 +12,7 @@
     modebar: { orientation: 'v' },
     paper_bgcolor: '#222222',
     plot_bgcolor: '#222222',
+    showlegend: false,
   };
 </script>
 

@@ -11,6 +11,7 @@
     "csv-parse": "^5.5.2",
     "monaco-editor": "^0.44.0",
     "plotly.js-cartesian-dist-min": "^2.27.1",
+    "regression": "^2.0.1",
     "sql.js": "^1.9.0",
     "xlsx": "^0.18.5"
   },
@@ -23,6 +24,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/plotly.js": "^2.12.30",
+    "@types/regression": "^2.0.6",
     "postcss": "^8.4.32",
     "rollup": "^4.6.1",
     "rollup-plugin-copy": "^3.5.0",
