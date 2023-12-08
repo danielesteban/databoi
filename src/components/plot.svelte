@@ -7,10 +7,12 @@
     modeBarButtonsToRemove: ['resetScale2d', 'toImage'],
     responsive: true,
   };
-  const layout: (title?: string) => Partial<plotly.Layout> = (title?: string) => ({
+  const layout: (center?: { lat: number; lon: number }, title?: string) => Partial<plotly.Layout> = (center, title) => ({
     font: { family: "'Roboto Condensed', monospace", color: '#eeeeee' },
     mapbox: {
+      center,
       style: 'dark',
+      zoom: 4,
     },
     margin: title ? { t: 64, r: 48, b: 48, l: 48 } : { t: 0, r: 0, b: 0, l: 0 },
     modebar: { orientation: 'v' },
@@ -24,34 +26,35 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-	export let title: string | undefined = undefined;
+	export let center: { lat: number; lon: number } | undefined = undefined;
 	export let data: any[];
+	export let title: string | undefined = undefined;
 
-  let lastData: any[];
-  let lastTitle: string | undefined;
-	let plot: HTMLDivElement;
+  let lastData: any[] = data;
+  let lastCenter: { lat: number; lon: number } | undefined = center;
+  let lastTitle: string | undefined = title;
+	let plot: HTMLElement;
 
   onMount(() => {
-    lastData = data;
-    lastTitle = title;
-    plotly.newPlot(plot, data, layout(title), config);
+    plotly.newPlot(plot, data, layout(center, title), config);
     return () => plotly.purge(plot);
   });
 
-  const update = (data: any[], title?: string) => {
+  const update = (data: any[], center?: { lat: number; lon: number }, title?: string) => {
     if (
       !plot
-      || (data === lastData && title === lastTitle)
+      || (data === lastData && center === lastCenter && title === lastTitle)
     ) {
       return;
     }
     lastData = data;
+    lastCenter = center;
     lastTitle = title;
     plotly.purge(plot);
-    plotly.newPlot(plot, data, layout(title), config);
+    plotly.newPlot(plot, data, layout(center, title), config);
   };
 
-  $: update(data, title);
+  $: update(data, center, title);
 </script>
 
 <div class="plot" bind:this={plot} />

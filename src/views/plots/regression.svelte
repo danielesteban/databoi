@@ -21,7 +21,7 @@
     const xn = $View.columns[$xi];
     const yn = $View.columns[$yi];
     if (!xn || !yn) {
-      return { title: '', data: [] };
+      return { data: [] };
     }
     let minX = Infinity;
     let maxX = -Infinity;
