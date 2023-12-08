@@ -58,9 +58,8 @@
 </script>
 
 <div class="plot">
-  <slot name="top" />
+  <slot />
   <div bind:this={plot} />
-  <slot name="bottom" />
 </div>
 
 <style>

@@ -62,7 +62,7 @@
 </script>
 
 <Plot title={$regression.title} data={$regression.data}>
-  <div slot="top" class="config">
+  <div class="config">
     <div class="field">
       <label for="regressionType">Type</label>
       <select id="regressionType" bind:value={$type}>

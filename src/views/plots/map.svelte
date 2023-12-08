@@ -57,7 +57,7 @@
 
 {#if $map.data.length}
   <Plot center={$map.center} data={$map.data}>
-    <div slot="bottom" class="config">
+    <div class="config">
       <select bind:value={$colorColumn}>
         {#each $View.columns as column, index}
           <option value={index}>{column}</option>
