@@ -3,6 +3,14 @@ import { read as readXLS, utils as XLSUtils } from 'xlsx';
 
 let db = null;
 
+function isNull(v) {
+  return (v === '' || v === null || v === undefined);
+}
+
+function isFloat(v) {
+  return (v - parseFloat(v) + 1) >= 0;
+}
+
 function onModuleReady(SQL) {
   const { data } = this;
   switch (data && data.action) {
@@ -15,7 +23,7 @@ function onModuleReady(SQL) {
         );
         if (file.type === 'text/csv') {
           reader.onload = () => {
-            parseCSV(reader.result, { cast: true, delimiter, trim: true }, (err, data) => {
+            parseCSV(reader.result, { delimiter, trim: true }, (err, data) => {
               if (err) {
                 reject(new Error(`load: ${err.message}`));
                 return;
@@ -36,16 +44,35 @@ function onModuleReady(SQL) {
       })
       .then((data) => {
         const columns = data[0].map((name, i) => (name || `unnamed_${i < 10 ? '0' : ''}${i}`));
-        const values = data.slice(1).filter((record) => (
-          !dropNull || !record.some((r) => (r === '' || r === undefined || r === null))
-        ), []);
-        const types = (values[0] || []).map((v, i) => `${JSON.stringify(columns[i])} ${typeof v === 'number' ? 'real' : 'text'}`).join(',');
-        const val = Array.from({ length: columns.length }, () => '?').join(',');
+        let values = data.slice(1);
+        if (dropNull) {
+          values = values.filter((record) => !record.some(isNull));
+        }
+        const types = Array.from({ length: columns.length }, () => '');
+        for (let i = 0, l = values.length; i < l; i++) {
+          const v = values[i];
+          if (
+            types.every((type, j) => {
+              if (type) {
+                return true;
+              }
+              if (dropNull || !isNull(v[j])) {
+                types[j] = isFloat(v[j]) ? 'real' : 'text';
+                return true;
+              }
+              return false;
+            })
+          ) {
+            break;
+          }
+        }
+        const create = `CREATE TABLE data(${columns.map((c, i) => `${JSON.stringify(c)} ${types[i] || 'text'}`).join(',')});`;
+        const insert = `INSERT INTO data VALUES (${Array.from({ length: columns.length }, () => '?').join(',')});`;
 
         if (db !== null) db.close();
         db = new SQL.Database();
-        db.exec(`CREATE TABLE data(${types});`);
-        values.forEach((row) => db.exec(`INSERT INTO data VALUES (${val});`, row));
+        db.exec(create);
+        values.forEach((row) => db.exec(insert, row));
         postMessage({
           id,
           results: [columns],
