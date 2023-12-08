@@ -4,7 +4,7 @@
   const config: Partial<plotly.Config> = {
     displaylogo: false,
     mapboxAccessToken: 'pk.eyJ1IjoiZGFuaWdhdHVuZXMiLCJhIjoiY2xwd21jd2J2MGcxcDJrbzk0bHAwMjlyOCJ9.yoSPGPhmUo9Z9fqOxOWqiQ',
-    modeBarButtonsToRemove: ['resetScale2d', 'toImage'],
+    modeBarButtonsToRemove: ['lasso2d', 'resetScale2d', 'select2d', 'toImage'],
     responsive: true,
   };
   const layout: (center?: { lat: number; lon: number }, title?: string) => Partial<plotly.Layout> = (center, title) => ({
