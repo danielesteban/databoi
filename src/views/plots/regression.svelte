@@ -1,4 +1,6 @@
 <script context="module" lang="ts">
+  import { writable } from 'svelte/store';
+
   enum RegressionType {
     exponential = 'exponential',
     linear = 'linear',
@@ -13,7 +15,7 @@
 
 <script lang="ts">
   import Regression from 'regression';
-  import { writable, derived } from 'svelte/store';
+  import { derived } from 'svelte/store';
   import Plot from 'components/plot.svelte';
   import { View } from 'state/data';
 
@@ -59,8 +61,8 @@
   });
 </script>
 
-<div class="regression">
-  <div class="config">
+<Plot title={$regression.title} data={$regression.data}>
+  <div slot="top" class="config">
     <div class="field">
       <label for="regressionType">Type</label>
       <select id="regressionType" bind:value={$type}>
@@ -71,15 +73,15 @@
       </select>
     </div>
     <div class="field">
-    <label for="yIndex">y</label>
-    <select id="yIndex" bind:value={$yi}>
-      {#each $View.columns as column, index}
-        <option value={index}>{column}</option>
-      {/each}
-    </select>
+      <label for="yIndex">Y</label>
+      <select id="yIndex" bind:value={$yi}>
+        {#each $View.columns as column, index}
+          <option value={index}>{column}</option>
+        {/each}
+      </select>
     </div>
     <div class="field">
-      <label for="xIndex">x</label>
+      <label for="xIndex">X</label>
       <select id="xIndex" bind:value={$xi}>
         {#each $View.columns as column, index}
           <option value={index}>{column}</option>
@@ -87,25 +89,19 @@
       </select>
     </div>
   </div>
-  {#if $regression.data.length}
-    <Plot title={$regression.title} data={$regression.data} />
-  {/if}
-</div>
+</Plot>
 
 <style>
-  .regression {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
   .config {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.25rem;
+    background: #111;
+    padding: 0.25rem 0.75rem;
   }
   .field {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 </style>

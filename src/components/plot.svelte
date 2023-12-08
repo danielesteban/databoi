@@ -57,7 +57,11 @@
   $: update(data, center, title);
 </script>
 
-<div class="plot" bind:this={plot} />
+<div class="plot">
+  <slot name="top" />
+  <div bind:this={plot} />
+  <slot name="bottom" />
+</div>
 
 <style>
   .plot {
