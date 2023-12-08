@@ -1,0 +1,13 @@
+diff --git a/src/plugin/load.js b/src/plugin/load.js
+index 5a2bb6970dcfb491c5ffd2bfa1e9da63b55fc5ea..0d3339ed6e9c1ddf58adba37d24ef3886e6b6e58 100644
+--- a/src/plugin/load.js
++++ b/src/plugin/load.js
+@@ -84,7 +84,7 @@ function load(state, config, addWatchFile, id) {
+                 const bundleOptions = {
+                     format: 'iife',
+                     name: 'worker_code',
+-                    sourcemap: true,
++                    sourcemap: config.sourcemap,
+                     inlineDynamicImports: true,
+                 };
+                 bundle.generate(bundleOptions).then(result => {

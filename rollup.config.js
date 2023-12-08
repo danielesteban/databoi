@@ -101,7 +101,7 @@ export default {
     svelte({ preprocess: sveltePreprocess({ sourceMap: !production }) }),
     typescript({ sourceMap: !production, inlineSources: !production }),
     postcss({ extract: true, minimize: production }),
-    webWorkerLoader(),
+    webWorkerLoader({ sourcemap: !production }),
     html({
       template: ({ files }) => (
         fs.readFileSync(path.join(__dirname, 'src', 'index.html'), 'utf8')
