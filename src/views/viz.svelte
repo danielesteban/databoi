@@ -65,7 +65,6 @@
     left: 50%;
     bottom: 0;
     transform: translate(-50%, -50%);
-    border-radius: 0.25rem;
     background: #393;
   }
   .plots {
@@ -73,6 +72,6 @@
     grid-auto-rows: max-content;
     padding: 1rem;
     gap: 0.5rem;
-    overflow-y: auto;
+    overflow-y: scroll;
   }
 </style>
