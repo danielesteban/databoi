@@ -42,16 +42,16 @@
     }, { x: [], y: [] });
     const s = (maxY - minY) / (maxX - minX);
     const { points, r2 } = Regression[$type](x.map((v, i) => [minY + (v - minX) * s, y[i]]));
-    const { px, py } = (points as [number, number][]).sort((a, b) => a[0] - b[0]).reduce<{ px: any[]; py: any[]; }>((points, point) => {
-      points.px.push(minX + (point[0] - minY) / s);
-      points.py.push(point[1]);
+    const { rx, ry } = points.map(([_, y], i) => [x[i], y]).sort((a, b) => a[0] - b[0]).reduce<{ rx: any[]; ry: any[]; }>((points, [x, y]) => {
+      points.rx.push(x);
+      points.ry.push(y);
       return points;
-    }, { px: [], py: [] });
+    }, { rx: [], ry: [] });
     return {
       title: `Y: ${yn} - X: ${xn} (r²: ${r2})`,
       data: [
         { name: '', x, y, mode: 'markers' },
-        { name: '', x: px, y: py, mode: 'lines' },
+        { name: '', x: rx, y: ry, mode: 'lines' },
       ],
     };
   });
