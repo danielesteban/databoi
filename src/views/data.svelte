@@ -3,7 +3,7 @@
   import VirtualList from '@sveltejs/svelte-virtual-list';
   import Editor from 'components/editor.svelte';
   import Split, { SplitMode } from 'components/split.svelte';
-  import { Query, View } from 'state/data';
+  import { Query, QueryError, View } from 'state/data';
 </script>
 
 <div class="data">
@@ -33,7 +33,12 @@
     </div>
   </Split>
   <div class="info">
-    {$View.values.length} Results
+    <div class="error">
+      {$QueryError}
+    </div>
+    <div>
+      {$View.values.length} Results
+    </div>
   </div>
 </div>
 
@@ -52,6 +57,9 @@
     display: grid;
     grid-template-rows: auto 1fr;
   }
+  .error {
+    color: #933;
+  }
   .info {
     box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
     position: relative;
@@ -60,7 +68,8 @@
     background: #222;
     padding: 0.5rem 1.25rem;
     color: #aaa;
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
   }
   .columns, .row {
     display: grid;

@@ -3,11 +3,12 @@ import { writable } from 'svelte/store';
 import SQLWorker from 'web-worker:./worker.js';
 
 const query = writable<string>('');
+const queryError = writable<string>('');
 const view = writable<{ columns: string[]; values: any[]; }>({ columns: [], values: [] });
 
 const db = {
   msgId: 1,
-  listeners: new Map<number, { resolve: (results: any[]) => void, reject: (err: string) => void }>(),
+  listeners: new Map<number, { resolve: (results: any[]) => void, reject: (err: Error) => void }>(),
   worker: new SQLWorker() as Worker,
   onmessage({ data: { id, error, results } }: { data: { id: number, error?: string, results?: any[] } }) {
     const { listeners } = this;
@@ -17,7 +18,7 @@ const db = {
       if (results) {
         listener.resolve(results);
       } else {
-        listener.reject(error || 'sql error');
+        listener.reject(new Error(error || 'sql error'));
       }
     }
   },
@@ -48,15 +49,21 @@ query.subscribe(($query) => {
   current.aborted = true;
   const controller = { aborted: false };
   current = controller;
-  db
-    .exec($query)
-    .then((res) => {
-      if (controller.aborted || !res) {
-        return;
-      }
-      view.set(res[0] || { columns: [], values: [] });
-    })
-    .catch((e) => console.error(e));
+  queryError.set('');
+  setTimeout(() => {
+    if (controller.aborted) {
+      return;
+    }
+    db
+      .exec($query)
+      .then((res) => {
+        if (controller.aborted || !res) {
+          return;
+        }
+        view.set(res[0] || { columns: [], values: [] });
+      })
+      .catch((e) => queryError.set(e.message));
+  }, 150);
 });
 
 export const load = async (file: File, delimiter = ',', dropNull = true) => {
@@ -79,6 +86,10 @@ export const load = async (file: File, delimiter = ',', dropNull = true) => {
 };
 
 export const Query = query;
+
+export const QueryError = {
+  subscribe: queryError.subscribe,
+};
 
 export const View = {
   subscribe: view.subscribe,
