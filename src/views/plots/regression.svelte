@@ -1,9 +1,4 @@
-<script lang="ts">
-  import Regression from 'regression';
-  import { writable, derived } from 'svelte/store';
-  import Plot from 'components/plot.svelte';
-  import { View } from 'state/data';
-
+<script context="module" lang="ts">
   enum RegressionType {
     exponential = 'exponential',
     linear = 'linear',
@@ -14,6 +9,13 @@
   const type = writable(RegressionType.linear);
   const yi = writable(0);
   const xi = writable(1);
+</script>
+
+<script lang="ts">
+  import Regression from 'regression';
+  import { writable, derived } from 'svelte/store';
+  import Plot from 'components/plot.svelte';
+  import { View } from 'state/data';
 
   const regression = derived([View, xi, yi, type], ([$View, $xi, $yi, $type]) => {
     const xn = $View.columns[$xi];
