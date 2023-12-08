@@ -29,6 +29,16 @@
     e.preventDefault()
   );
 
+  const keydown = (e: KeyboardEvent) => {
+    if (
+      e.target
+      && !['input', 'select', 'textarea'].includes((e.target as HTMLElement).tagName.toLowerCase())
+      && e.key === ' '
+    ) {
+      e.preventDefault();
+    }
+  };
+
   const browse = () => {
     const loader = document.createElement('input');
     loader.type = 'file';
@@ -50,7 +60,7 @@
   };
 </script>
 
-<svelte:document on:contextmenu={prevent} on:dragenter={prevent} on:dragover={prevent} on:drop={drop} />
+<svelte:document on:contextmenu={prevent} on:dragenter={prevent} on:dragover={prevent} on:drop={drop} on:keydown={keydown} />
 
 {#if loaded}
   <slot />

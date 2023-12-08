@@ -22,7 +22,7 @@ dependencies:
   monaco-editor:
     specifier: ^0.45.0
     version: 0.45.0
-  plotly.js-cartesian-dist-min:
+  plotly.js-dist-min:
     specifier: ^2.27.1
     version: 2.27.1
   regression:
@@ -1309,8 +1309,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /plotly.js-cartesian-dist-min@2.27.1:
-    resolution: {integrity: sha512-OTd3gZnVG401SyBN15ZZYfT4sydhr4hgGa1C5i06wWzfwMBjaw541JdCgig0YV1+VAobiMhHHtuMbx0obwo/XQ==}
+  /plotly.js-dist-min@2.27.1:
+    resolution: {integrity: sha512-fFPFityhOkDtjoIVd/9IJQbEEuKEjfmNALBVLZyHwLIkry5ygE4ZC/XENRqLnWR3rNJdTtEaxhM5zflcWTRlDA==}
     dev: false
 
   /postcss-calc@8.2.4(postcss@8.4.32):

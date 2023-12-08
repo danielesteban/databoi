@@ -35,7 +35,7 @@ const Font = (() => {
 })();
 
 const Plotly = (() => {
-  const input = 'node_modules/plotly.js-cartesian-dist-min/plotly-cartesian.min.js';
+  const input = 'node_modules/plotly.js-dist-min/plotly.min.js';
   return {
     input,
     output: `plotly-${getHash(input)}.js`,

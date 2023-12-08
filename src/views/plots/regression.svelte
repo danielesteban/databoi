@@ -87,7 +87,9 @@
       </select>
     </div>
   </div>
-  <Plot title={$regression.title} data={$regression.data} />
+  {#if $regression.data.length}
+    <Plot title={$regression.title} data={$regression.data} />
+  {/if}
 </div>
 
 <style>

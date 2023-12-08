@@ -1,15 +1,16 @@
 <script lang="ts">
   import Correlation from 'views/plots/correlation.svelte';
   import Histogram from 'views/plots/histogram.svelte';
+  import Map from 'views/plots/map.svelte';
   import Regression from 'views/plots/regression.svelte';
 
   enum Tab {
     correlation,
-    histogram,
+    distribution,
     regression,
   }
 
-  let tab = Tab.histogram;
+  let tab = Tab.distribution;
   const setTab = (t: Tab) => () => {
     tab = t;
   };
@@ -17,7 +18,7 @@
 
 <div class="viz">
   <div class="menu">
-    <button on:click={setTab(Tab.histogram)} class:active={tab === Tab.histogram}>Histogram</button>
+    <button on:click={setTab(Tab.distribution)} class:active={tab === Tab.distribution}>Distribution</button>
     <button on:click={setTab(Tab.correlation)}  class:active={tab === Tab.correlation}>Correlation</button>
     <button on:click={setTab(Tab.regression)}  class:active={tab === Tab.regression}>Regression</button>
   </div>
@@ -25,7 +26,8 @@
     {#if tab === Tab.correlation}
       <Correlation />
     {/if}
-    {#if tab === Tab.histogram}
+    {#if tab === Tab.distribution}
+      <Map />
       <Histogram />
     {/if}
     {#if tab === Tab.regression}
