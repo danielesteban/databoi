@@ -48,7 +48,7 @@
       return points;
     }, { px: [], py: [] });
     return {
-      title: `X: ${xn} - Y: ${yn} (r²: ${r2})`,
+      title: `Y: ${yn} - X: ${xn} (r²: ${r2})`,
       data: [
         { name: '', x, y, mode: 'markers' },
         { name: '', x: px, y: py, mode: 'lines' },
