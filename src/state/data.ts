@@ -1,10 +1,11 @@
 import { writable } from 'svelte/store';
 // @ts-ignore
-import SQLWorker from 'web-worker:./worker.js';
+import SQLWorker from 'web-worker:./worker.ts';
 
+const correlation = writable<{ computed: boolean; values: number[][]; }>({ computed: false, values: [] });
 const query = writable<string>('');
 const queryError = writable<string>('');
-const view = writable<{ columns: string[]; values: any[]; }>({ columns: [], values: [] });
+const view = writable<{ columns: string[]; values: any[][]; }>({ columns: [], values: [] });
 
 const db = {
   msgId: 1,
@@ -22,70 +23,72 @@ const db = {
       }
     }
   },
-  load(file: File, delimiter = ',', dropNull = true) {
+  request(action: string, params?: any) {
     const { listeners, worker } = this;
     return new Promise<any[]>((resolve, reject) => {
       const id = this.msgId++;
       listeners.set(id, { resolve, reject });
-      worker.postMessage({ id, action: 'load', file, delimiter, dropNull });
+      worker.postMessage({ id, action, ...params });
     });
   },
-  exec(sql: string, params?: Record<string, any>) {
-    const { listeners, worker } = this;
-    return new Promise<any[]>((resolve, reject) => {
-      const id = this.msgId++;
-      listeners.set(id, { resolve, reject });
-      worker.postMessage({ id, action: 'exec', sql, params });
-    });
-  }
 };
 db.worker.onmessage = db.onmessage.bind(db);
 
-let current: { aborted: boolean } = { aborted: false };
-query.subscribe(($query) => {
-  if (!$query) {
-    return;
-  }
-  current.aborted = true;
-  const controller = { aborted: false };
-  current = controller;
+export const load = async (file: File, delimiter = ',', dropNull = true) => {
+  correlationRequest.aborted = queryRequest.aborted = true;
+  correlation.set({ computed: false, values: [] });
+  query.set('');
   queryError.set('');
-  setTimeout(() => {
+  view.set({ columns: [], values: [] });
+  const res = await db.request('load', { file, delimiter, dropNull });
+  query.set(res[0]);
+  view.set(res[1]);
+};
+
+let correlationRequest: { aborted: boolean } = { aborted: false };
+export const Correlation = {
+  subscribe: correlation.subscribe,
+  compute: async () => {
+    correlationRequest.aborted = true;
+    const controller = { aborted: false };
+    correlationRequest = controller;
+    const res = await db.request('correlation');
     if (controller.aborted) {
       return;
     }
-    db
-      .exec($query)
-      .then((res) => {
-        if (controller.aborted || !res) {
-          return;
-        }
-        view.set(res[0] || { columns: [], values: [] });
-      })
-      .catch((e) => queryError.set(e.message));
-  }, 150);
-});
-
-export const load = async (file: File, delimiter = ',', dropNull = true) => {
-  query.set('');
-  const [columns] = await db.load(file, delimiter, dropNull);
-  query.set(`SELECT\n${columns.map((c: string) => JSON.stringify(c)).join(',\n')}\nFROM data`);
-  await new Promise<void>((resolve) => {
-    // @dani @incomplete
-    // although it works, this is dumb.
-    let first = true;
-    const unsubscribe = view.subscribe(() => {
-      if (first) {
-        first = false;
-        return;
-      }
-      unsubscribe();
-      resolve();
-    });
-  });
+    correlation.set({ computed: true, values: res[0] });
+  },
 };
 
-export const Query = query;
+let queryRequest: { aborted: boolean } = { aborted: false };
+export const Query = {
+  subscribe: query.subscribe,
+  set(sql: string) {
+    queryRequest.aborted = true;
+    query.set(sql);
+    if (!sql) {
+      return;
+    }
+    const controller = { aborted: false };
+    queryRequest = controller;
+    queryError.set('');
+    setTimeout(async () => {
+      if (controller.aborted) {
+        return;
+      }
+      try {
+        const res = await db.request('query', { sql });
+        if (controller.aborted) {
+          return;
+        }
+        correlation.set({ computed: false, values: [] });
+        view.set(res[0]);
+      } catch (e) {
+        queryError.set((e as Error).message);
+      }
+    }, 150);
+  },
+};
 
 export const QueryError = {
   subscribe: queryError.subscribe,

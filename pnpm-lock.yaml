@@ -63,6 +63,9 @@ devDependencies:
   '@types/regression':
     specifier: ^2.0.6
     version: 2.0.6
+  '@types/sql.js':
+    specifier: ^1.4.9
+    version: 1.4.9
   postcss:
     specifier: ^8.4.32
     version: 8.4.32
@@ -414,6 +417,10 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: true
 
+  /@types/emscripten@1.39.10:
+    resolution: {integrity: sha512-TB/6hBkYQJxsZHSqyeuO1Jt0AB/bW6G7rHt9g7lML7SOF6lbgcHvw/Lr+69iqN0qxgXLhWKScAon73JNnptuDw==}
+    dev: true
+
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
     dev: true
@@ -455,6 +462,13 @@ packages:
 
   /@types/resolve@1.20.2:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
+    dev: true
+
+  /@types/sql.js@1.4.9:
+    resolution: {integrity: sha512-ep8b36RKHlgWPqjNG9ToUrPiwkhwh0AEzy883mO5Xnd+cL6VBH1EvSjBAAuxLUFF2Vn/moE3Me6v9E1Lo+48GQ==}
+    dependencies:
+      '@types/emscripten': 1.39.10
+      '@types/node': 20.10.4
     dev: true
 
   /acorn@8.11.2:

@@ -25,6 +25,7 @@
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/plotly.js": "^2.12.30",
     "@types/regression": "^2.0.6",
+    "@types/sql.js": "^1.4.9",
     "postcss": "^8.4.32",
     "rollup": "^4.7.0",
     "rollup-plugin-copy": "^3.5.0",
