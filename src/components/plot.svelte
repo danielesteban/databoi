@@ -50,8 +50,7 @@
     lastData = data;
     lastCenter = center;
     lastTitle = title;
-    plotly.purge(plot);
-    plotly.newPlot(plot, data, layout(center, title), config);
+    plotly.react(plot, data, layout(center, title), config);
   };
 
   $: update(data, center, title);
@@ -65,7 +64,8 @@
 <style>
   .plot {
     border: 1px solid #000;
-    border-radius: 0.5rem;
-    overflow: hidden;
+  }
+  .plot > div {
+    height: 450px; 
   }
 </style>

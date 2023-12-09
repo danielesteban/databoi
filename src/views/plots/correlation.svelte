@@ -36,8 +36,6 @@
 <style>
   .plot {
     border: 1px solid #000;
-    border-radius: 0.5rem;
-    overflow: hidden;
   }
   .row {
     display: grid;

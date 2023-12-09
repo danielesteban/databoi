@@ -46,6 +46,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0 0.5rem;
     box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
     position: relative;
     z-index: 1;
