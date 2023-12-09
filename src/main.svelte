@@ -6,7 +6,7 @@
 </script>
 
 <Loader>
-  <Split mode={SplitMode.horizontal}>
+  <Split min={320} mode={SplitMode.horizontal}>
     <Viz slot="A" />
     <Data slot="B" />
   </Split>

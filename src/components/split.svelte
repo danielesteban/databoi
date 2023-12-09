@@ -8,18 +8,19 @@
 <script lang="ts">
   import { tick } from 'svelte';
 
+  export let min = 160;
   export let mode: SplitMode;
 
   let size = ((mode === SplitMode.horizontal ? window.innerWidth : window.innerHeight) - 10) * 0.5;
   const setSize = (target: number) => {
-    size = Math.min(Math.max(Math.floor(target), drag.margin), (mode === SplitMode.horizontal ? window.innerWidth : window.innerHeight) - drag.margin);
+    size = Math.min(Math.max(Math.floor(target), drag.min), (mode === SplitMode.horizontal ? window.innerWidth : window.innerHeight) - drag.min);
     tick().then(() => window.dispatchEvent(new Event('resize')));
   }
   const drag = {
     enabled: false,
     initial: 0,
     offset: 0,
-    margin: 150,
+    min,
   };
   const pointerdown = ({ clientX, clientY, pointerId, target }: PointerEvent) => {
     (target as HTMLDivElement).setPointerCapture(pointerId);
@@ -38,7 +39,7 @@
   };
   const resize = () => {
     const max = (mode === SplitMode.horizontal ? window.innerWidth : window.innerHeight);
-    if (size > max - drag.margin) {
+    if (size > max - drag.min) {
       setSize(max);
     }
   };
