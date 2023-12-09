@@ -17,8 +17,8 @@ dependencies:
     specifier: ^3.0.2
     version: 3.0.2
   csv-parse:
-    specifier: ^5.5.2
-    version: 5.5.2
+    specifier: ^5.5.3
+    version: 5.5.3
   monaco-editor:
     specifier: ^0.45.0
     version: 0.45.0
@@ -794,8 +794,8 @@ packages:
       css-tree: 1.1.3
     dev: true
 
-  /csv-parse@5.5.2:
-    resolution: {integrity: sha512-YRVtvdtUNXZCMyK5zd5Wty1W6dNTpGKdqQd4EQ8tl/c6KW1aMBB1Kg1ppky5FONKmEqGJ/8WjLlTNLPne4ioVA==}
+  /csv-parse@5.5.3:
+    resolution: {integrity: sha512-v0KW6C0qlZzoGjk6u5tLmVfyZxNgPGXZsWTXshpAgKVGmGXzaVWGdlCFxNx5iuzcXT/oJN1HHM9DZKwtAtYa+A==}
     dev: false
 
   /deepmerge@4.3.1:
