@@ -2,7 +2,17 @@
   import ColorScale from 'color-scales';
   import { Correlation, View } from 'state/data';
 
-  const colors = new ColorScale(-1, 1, ["#FF6666", "#66FF66", "#6666FF"], 0.4);
+  const colors = new ColorScale(-1, 1, [
+    '#96005A',
+    '#0000C8',
+    '#0019FF',
+    '#0098FF',
+    '#2CFF96',
+    '#97FF00',
+    '#FFEA00',
+    '#FF6F00',
+    '#FF0000',
+  ], 0.25);
   const background = (value: number) => colors.getColor(value).toHexString();
 
   $: !$Correlation.computed && !$Correlation.computing && Correlation.compute();
