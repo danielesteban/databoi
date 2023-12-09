@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { Writable } from 'svelte/store';
 
-  export let source: Writable<string>;
+  export let source: Omit<Writable<string>, 'update'>;
 
   let wrapper: HTMLDivElement;
   let editor: any;
