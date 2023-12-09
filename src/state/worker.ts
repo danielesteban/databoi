@@ -80,10 +80,13 @@ const regression = (x: string, y: string, type: 'exponential' | 'linear' | 'loga
     minY = Math.min(minY, y);
     maxY = Math.max(maxY, y);
     return [x, y];
-  });
+  }).sort((a, b) => a[0] - b[0]);
   const s = (maxY - minY) / (maxX - minX);
   const { points, r2 } = Regression[type](values.map(([x, y]) => [minY + (x - minX) * s, y]));
-  return [points.map(([_, y]) => y), r2];
+  return [
+    values.map(([x, _y], i) => [x, points[i][1]]),
+    r2,
+  ];
 };
 
 const isFloat = (v: any) => (

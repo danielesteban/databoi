@@ -5,7 +5,7 @@ import SQLWorker from 'web-worker:./worker.ts';
 const correlation = writable<{ computed: boolean; computing: boolean; values: number[][]; }>({ computed: false, computing: false, values: [] });
 const query = writable<string>('');
 const queryError = writable<string>('');
-const regression = writable<{ computed: boolean; computing: boolean; r2: number; values: number[]; }>({ computed: false, computing: false, r2: 0, values: [] });
+const regression = writable<{ computed: boolean; computing: boolean; r2: number; values: number[][]; }>({ computed: false, computing: false, r2: 0, values: [] });
 const view = writable<{ columns: string[]; values: any[][]; }>({ columns: [], values: [] });
 
 const db = {

@@ -28,19 +28,11 @@
     if (xi === -1 || yi === -1) {
       return { data: [] };
     }
-    const { rx, ry } = $Regression.values
-      .map((y, i) => [$View.values[i][xi], y])
-      .sort((a, b) => a[0] - b[0])
-      .reduce<{ rx: any[]; ry: any[]; }>((points, [x, y]) => {
-        points.rx.push(x);
-        points.ry.push(y);
-        return points;
-      }, { rx: [], ry: [] });
     return {
       title: `Y: ${$y} - X: ${$x}${$Regression.computed ? ` (r²: ${$Regression.r2})` : ''}`,
       data: [
         { name: '', x: $View.values.map((v) => v[xi]), y: $View.values.map((v) => v[yi]), mode: 'markers' },
-        { name: '', x: rx, y: ry, mode: 'lines' },
+        { name: '', x: $Regression.values.map((v) => v[0]), y: $Regression.values.map((v) => v[1]), mode: 'lines' },
       ],
     };
   });
