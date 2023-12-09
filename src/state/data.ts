@@ -35,8 +35,9 @@ const db = {
 db.worker.onmessage = db.onmessage.bind(db);
 
 export const load = async (file: File, delimiter = ',', dropNull = true) => {
-  correlationRequest.aborted = queryRequest.aborted = true;
+  correlationRequest.aborted = true;
   correlation.set({ computed: false, values: [] });
+  queryRequest.aborted = true;
   query.set('');
   queryError.set('');
   view.set({ columns: [], values: [] });
@@ -81,6 +82,7 @@ export const Query = {
         if (controller.aborted) {
           return;
         }
+        correlationRequest.aborted = true;
         correlation.set({ computed: false, values: [] });
         view.set(res[0]);
       } catch (e) {
