@@ -7,12 +7,11 @@
     modeBarButtonsToRemove: ['lasso2d', 'resetScale2d', 'select2d', 'toImage'],
     responsive: true,
   };
-  const layout: (center?: { lat: number; lon: number }, title?: string) => Partial<plotly.Layout> = (center, title) => ({
+  const layout: (map: Partial<plotly.Mapbox>, title?: string) => Partial<plotly.Layout> = (map, title) => ({
     font: { family: "'Roboto Condensed', monospace", color: '#eeeeee' },
     mapbox: {
-      center,
+      ...map,
       style: 'dark',
-      zoom: 4,
     },
     margin: title ? { t: 64, r: 48, b: 48, l: 48 } : { t: 0, r: 0, b: 0, l: 0 },
     modebar: { orientation: 'v' },
@@ -26,34 +25,41 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-	export let center: { lat: number; lon: number } | undefined = undefined;
+	export let center: plotly.MapboxCenter | undefined = undefined;
 	export let data: any[];
 	export let title: string | undefined = undefined;
 
+  let map: Partial<plotly.Mapbox> = { center, zoom: 4 };
   let lastData: any[] = data;
-  let lastCenter: { lat: number; lon: number } | undefined = center;
   let lastTitle: string | undefined = title;
 	let plot: HTMLElement;
 
   onMount(() => {
-    plotly.newPlot(plot, data, layout(center, title), config);
+    plotly
+      .newPlot(plot, data, layout(map, title), config)
+      .then((p) => p.on('plotly_relayout', (e: any) => {
+        ['mapbox.bearing', 'mapbox.center', 'mapbox.pitch', 'mapbox.zoom'].forEach((key) => {
+          if (e[key]) {
+            (map as any)[key.split('.')[1]] = e[key];
+          }
+        });
+      }));
     return () => plotly.purge(plot);
   });
 
-  const update = (data: any[], center?: { lat: number; lon: number }, title?: string) => {
+  const update = (data: any[], title?: string) => {
     if (
       !plot
-      || (data === lastData && center === lastCenter && title === lastTitle)
+      || (data === lastData && title === lastTitle)
     ) {
       return;
     }
     lastData = data;
-    lastCenter = center;
     lastTitle = title;
-    plotly.react(plot, data, layout(center, title), config);
+    plotly.react(plot, data, layout(map, title), config);
   };
 
-  $: update(data, center, title);
+  $: update(data, title);
 </script>
 
 <div class="plot">
