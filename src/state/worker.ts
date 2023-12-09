@@ -158,8 +158,8 @@ function onModuleReady(SQL: SqlJsStatic) {
 
         if (db !== null) db.close();
         db = new SQL.Database();
-        db.exec(create);
-        values.forEach((row) => db!.exec(insert, row));
+        db.run(create);
+        values.forEach((row) => db!.run(insert, row));
         setView(`SELECT\n${columns.map((c: string) => JSON.stringify(c)).join(',\n')}\nFROM data`);
         postMessage({
           id,
