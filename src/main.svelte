@@ -116,6 +116,7 @@
   }
   :global(::-webkit-scrollbar:vertical) {
     width: 1rem;
+    border-left: 1px solid #000;
   }
   :global(::-webkit-scrollbar-thumb:vertical) {
     background: #555;
