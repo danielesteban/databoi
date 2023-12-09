@@ -5,7 +5,7 @@
   const colors = new ColorScale(-1, 1, ["#FF6666", "#66FF66", "#6666FF"], 0.4);
   const background = (value: number) => colors.getColor(value).toHexString();
 
-  $: !$Correlation.computed && Correlation.compute();
+  $: !$Correlation.computed && !$Correlation.computing && Correlation.compute();
 </script>
 
 {#if $Correlation.computed}

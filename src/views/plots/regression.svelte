@@ -20,12 +20,12 @@
 
   $: !$View.columns.some((c) => c === $x) && $View.columns[1] && x.set($View.columns[1]);
   $: !$View.columns.some((c) => c === $y) && $View.columns[0] && y.set($View.columns[0]);
-  $: !$Regression.computed && Regression.compute($x, $y, $type);
+  $: !$Regression.computed && !$Regression.computing && Regression.compute($x, $y, $type);
 
   const plot = derived([Regression, View, x, y], ([$Regression, $View, $x, $y]) => {
     const xi = $View.columns.findIndex((c) => c === $x);
     const yi = $View.columns.findIndex((c) => c === $y);
-    if (!$Regression.computed || xi === -1 || yi === -1) {
+    if (xi === -1 || yi === -1) {
       return { data: [] };
     }
     const { rx, ry } = $Regression.values
@@ -37,7 +37,7 @@
         return points;
       }, { rx: [], ry: [] });
     return {
-      title: `Y: ${$y} - X: ${$x} (r²: ${$Regression.r2})`,
+      title: `Y: ${$y} - X: ${$x}${$Regression.computed ? ` (r²: ${$Regression.r2})` : ''}`,
       data: [
         { name: '', x: $View.values.map((v) => v[xi]), y: $View.values.map((v) => v[yi]), mode: 'markers' },
         { name: '', x: rx, y: ry, mode: 'lines' },

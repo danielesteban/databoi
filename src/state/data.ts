@@ -2,10 +2,10 @@ import { writable } from 'svelte/store';
 // @ts-ignore
 import SQLWorker from 'web-worker:./worker.ts';
 
-const correlation = writable<{ computed: boolean; values: number[][]; }>({ computed: false, values: [] });
+const correlation = writable<{ computed: boolean; computing: boolean; values: number[][]; }>({ computed: false, computing: false, values: [] });
 const query = writable<string>('');
 const queryError = writable<string>('');
-const regression = writable<{ computed: boolean; r2: number; values: number[]; }>({ computed: false, r2: 0, values: [] });
+const regression = writable<{ computed: boolean; computing: boolean; r2: number; values: number[]; }>({ computed: false, computing: false, r2: 0, values: [] });
 const view = writable<{ columns: string[]; values: any[][]; }>({ columns: [], values: [] });
 
 const db = {
@@ -37,12 +37,12 @@ db.worker.onmessage = db.onmessage.bind(db);
 
 export const load = async (file: File, delimiter = ',', dropNull = true) => {
   correlationRequest.aborted = true;
-  correlation.set({ computed: false, values: [] });
+  correlation.set({ computed: false, computing: false, values: [] });
   queryRequest.aborted = true;
   query.set('');
   queryError.set('');
   regressionRequest.aborted = true;
-  regression.set({ computed: false, r2: 0, values: [] });
+  regression.set({ computed: false, computing: false, r2: 0, values: [] });
   view.set({ columns: [], values: [] });
   const res = await db.request('load', { file, delimiter, dropNull });
   query.set(res[0]);
@@ -54,14 +54,14 @@ export const Correlation = {
   subscribe: correlation.subscribe,
   compute: async () => {
     correlationRequest.aborted = true;
-    correlation.update(({ computed }) => ({ computed, values: [] }));
+    correlation.set({ computed: false, computing: true, values: [] });
     const controller = { aborted: false };
     correlationRequest = controller;
     const res = await db.request('correlation');
     if (controller.aborted) {
       return;
     }
-    correlation.set({ computed: true, values: res[0] });
+    correlation.set({ computed: true, computing: false, values: res[0] });
   },
 };
 
@@ -87,9 +87,9 @@ export const Query = {
           return;
         }
         correlationRequest.aborted = true;
-        correlation.set({ computed: false, values: [] });
+        correlation.set({ computed: false, computing: false, values: [] });
         regressionRequest.aborted = true;
-        regression.set({ computed: false, r2: 0, values: [] });
+        regression.set({ computed: false, computing: false, r2: 0, values: [] });
         view.set(res[0]);
       } catch (e) {
         queryError.set((e as Error).message);
@@ -107,14 +107,14 @@ export const Regression = {
   subscribe: regression.subscribe,
   compute: async (x: string, y: string, type: 'exponential' | 'linear' | 'logarithmic' | 'power') => {
     regressionRequest.aborted = true;
-    regression.update(({ computed }) => ({ computed, r2: 0, values: [] }));
+    regression.set({ computed: false, computing: true, r2: 0, values: [] });
     const controller = { aborted: false };
     regressionRequest = controller;
     const res = await db.request('regression', { x, y, type });
     if (controller.aborted) {
       return;
     }
-    regression.set({ computed: true, r2: res[1], values: res[0] });
+    regression.set({ computed: true, computing: false, r2: res[1], values: res[0] });
   },
 };
 
