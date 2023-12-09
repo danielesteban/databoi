@@ -13,7 +13,7 @@
     [1,'rgb(255, 0, 0)'],
   ];
 
-  const colorColumn = writable(0);
+  const color = writable('');
 </script>
 
 <script lang="ts">
@@ -21,10 +21,12 @@
   import Plot from 'components/plot.svelte';
   import { View } from 'state/data';
 
-  const map = derived([View, colorColumn], ([$View, $colorColumn]) => {
+  $: !$View.columns.some((c) => c === $color) && $View.columns[0] && color.set($View.columns[0]);
+
+  const map = derived([View, color], ([$View, $color]) => {
     const lat = $View.columns.findIndex((c) => ['latitude', 'lat'].includes(c.toLowerCase()));
     const lon = $View.columns.findIndex((c) => ['longitude', 'lon'].includes(c.toLowerCase()));
-    const color = $View.columns[$colorColumn] ? $colorColumn : -1;
+    const col = $View.columns.findIndex((c) => c === $color);
     if (lat === -1 || lon === -1) {
       return { data: [] };
     }
@@ -41,14 +43,14 @@
         lat: $View.values.map((v) => v[lat]),
         lon: $View.values.map((v) => v[lon]),
         type: 'scattermapbox',
-        ...(color !== -1 ? {
+        ...(col !== -1 ? {
           hovertemplate: '%{text}<extra></extra>',
           marker: {
-            color: $View.values.map((v) => v[color]),
+            color: $View.values.map((v) => v[col]),
             colorscale,
             opacity: 0.5,
           },
-          text: $View.values.map((v) => v[color]),
+          text: $View.values.map((v) => v[col]),
         } : {}),
       }],
     };
@@ -58,9 +60,9 @@
 {#if $map.data.length}
   <Plot center={$map.center} data={$map.data}>
     <div class="config">
-      <select bind:value={$colorColumn}>
-        {#each $View.columns as column, index}
-          <option value={index}>{column}</option>
+      <select bind:value={$color}>
+        {#each $View.columns as column}
+          <option value={column}>{column}</option>
         {/each}
       </select>
     </div>
