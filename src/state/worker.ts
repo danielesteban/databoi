@@ -1,4 +1,5 @@
 import { parse as parseCSV } from 'csv-parse/browser/esm';
+import Regression from 'regression';
 import { Database, SqlJsStatic } from 'sql.js';
 import { read as readXLS, utils as XLSUtils } from 'xlsx';
 
@@ -56,6 +57,33 @@ const correlation = () => {
       return result;
     })
   ));
+};
+
+const regression = (x: string, y: string, type: 'exponential' | 'linear' | 'logarithmic' | 'power') => {
+  if (!db) {
+    throw new Error('DB is not loaded');
+  }
+  const xi = view.columns.findIndex((c) => c === x);
+  const yi = view.columns.findIndex((c) => c === y);
+  if (xi === -1 || yi === -1) {
+    return [[], 0];
+  }
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  const values = view.values.map((v) => {
+    const x = v[xi];
+    minX = Math.min(minX, x);
+    maxX = Math.max(maxX, x);
+    const y = v[yi];
+    minY = Math.min(minY, y);
+    maxY = Math.max(maxY, y);
+    return [x, y];
+  });
+  const s = (maxY - minY) / (maxX - minX);
+  const { points, r2 } = Regression[type](values.map(([x, y]) => [minY + (x - minX) * s, y]));
+  return [points.map(([_, y]) => y), r2];
 };
 
 const isFloat = (v: any) => (
@@ -146,6 +174,11 @@ function onModuleReady(SQL: SqlJsStatic) {
       return postMessage({
         id: data.id,
         results: [correlation()],
+      });
+    case 'regression':
+      return postMessage({
+        id: data.id,
+        results: regression(data.x, data.y, data.type),
       });
     default:
       throw new Error('Invalid action: ' + (data && data.action));

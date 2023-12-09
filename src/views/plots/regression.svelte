@@ -8,64 +8,51 @@
     power = 'power',
   }
 
+  const x = writable('');
+  const y = writable('');
   const type = writable(RegressionType.linear);
-  const yi = writable(0);
-  const xi = writable(1);
 </script>
 
 <script lang="ts">
-  import Regression from 'regression';
   import { derived } from 'svelte/store';
   import Plot from 'components/plot.svelte';
-  import { View } from 'state/data';
+  import { Regression, View } from 'state/data';
 
-  const regression = derived([View, xi, yi, type], ([$View, $xi, $yi, $type]) => {
-    const xn = $View.columns[$xi];
-    const yn = $View.columns[$yi];
-    if (!xn || !yn) {
+  $: !$View.columns.some((c) => c === $x) && $View.columns[1] && x.set($View.columns[1]);
+  $: !$View.columns.some((c) => c === $y) && $View.columns[0] && y.set($View.columns[0]);
+  $: !$Regression.computed && Regression.compute($x, $y, $type);
+
+  const plot = derived([Regression, View, x, y], ([$Regression, $View, $x, $y]) => {
+    const xi = $View.columns.findIndex((c) => c === $x);
+    const yi = $View.columns.findIndex((c) => c === $y);
+    if (!$Regression.computed || xi === -1 || yi === -1) {
       return { data: [] };
     }
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minY = Infinity;
-    let maxY = -Infinity;
-    const { x, y } = $View.values.reduce<{ x: any[]; y: any[]; }>((xy, v) => {
-      {
-        const x = v[$xi];
-        minX = Math.min(minX, x);
-        maxX = Math.max(maxX, x);
-        xy.x.push(x);
-      }
-      {
-        const y = v[$yi];
-        minY = Math.min(minY, y);
-        maxY = Math.max(maxY, y);
-        xy.y.push(y);
-      }
-      return xy;
-    }, { x: [], y: [] });
-    const s = (maxY - minY) / (maxX - minX);
-    const { points, r2 } = Regression[$type](x.map((v, i) => [minY + (v - minX) * s, y[i]]));
-    const { rx, ry } = points.map(([_, y], i) => [x[i], y]).sort((a, b) => a[0] - b[0]).reduce<{ rx: any[]; ry: any[]; }>((points, [x, y]) => {
-      points.rx.push(x);
-      points.ry.push(y);
-      return points;
-    }, { rx: [], ry: [] });
+    const { rx, ry } = $Regression.values
+      .map((y, i) => [$View.values[i][xi], y])
+      .sort((a, b) => a[0] - b[0])
+      .reduce<{ rx: any[]; ry: any[]; }>((points, [x, y]) => {
+        points.rx.push(x);
+        points.ry.push(y);
+        return points;
+      }, { rx: [], ry: [] });
     return {
-      title: `Y: ${yn} - X: ${xn} (r²: ${r2})`,
+      title: `Y: ${$y} - X: ${$x} (r²: ${$Regression.r2})`,
       data: [
-        { name: '', x, y, mode: 'markers' },
+        { name: '', x: $View.values.map((v) => v[xi]), y: $View.values.map((v) => v[yi]), mode: 'markers' },
         { name: '', x: rx, y: ry, mode: 'lines' },
       ],
     };
   });
+
+  const recompute = () => Regression.compute($x, $y, $type);
 </script>
 
-<Plot title={$regression.title} data={$regression.data}>
+<Plot title={$plot.title} data={$plot.data}>
   <div class="config">
     <div class="field">
       <label for="regressionType">Type</label>
-      <select id="regressionType" bind:value={$type}>
+      <select id="regressionType" bind:value={$type} on:change={recompute}>
         <option value={RegressionType.linear}>linear</option>
         <option value={RegressionType.exponential}>exponential</option>
         <option value={RegressionType.logarithmic}>logarithmic</option>
@@ -74,17 +61,17 @@
     </div>
     <div class="field">
       <label for="yIndex">Y</label>
-      <select id="yIndex" bind:value={$yi}>
-        {#each $View.columns as column, index}
-          <option value={index}>{column}</option>
+      <select id="yIndex" bind:value={$y} on:change={recompute}>
+        {#each $View.columns as column}
+          <option value={column}>{column}</option>
         {/each}
       </select>
     </div>
     <div class="field">
       <label for="xIndex">X</label>
-      <select id="xIndex" bind:value={$xi}>
-        {#each $View.columns as column, index}
-          <option value={index}>{column}</option>
+      <select id="xIndex" bind:value={$x} on:change={recompute}>
+        {#each $View.columns as column}
+          <option value={column}>{column}</option>
         {/each}
       </select>
     </div>

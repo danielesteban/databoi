@@ -5,6 +5,7 @@ import SQLWorker from 'web-worker:./worker.ts';
 const correlation = writable<{ computed: boolean; values: number[][]; }>({ computed: false, values: [] });
 const query = writable<string>('');
 const queryError = writable<string>('');
+const regression = writable<{ computed: boolean; r2: number; values: number[]; }>({ computed: false, r2: 0, values: [] });
 const view = writable<{ columns: string[]; values: any[][]; }>({ columns: [], values: [] });
 
 const db = {
@@ -40,6 +41,8 @@ export const load = async (file: File, delimiter = ',', dropNull = true) => {
   queryRequest.aborted = true;
   query.set('');
   queryError.set('');
+  regressionRequest.aborted = true;
+  regression.set({ computed: false, r2: 0, values: [] });
   view.set({ columns: [], values: [] });
   const res = await db.request('load', { file, delimiter, dropNull });
   query.set(res[0]);
@@ -51,6 +54,7 @@ export const Correlation = {
   subscribe: correlation.subscribe,
   compute: async () => {
     correlationRequest.aborted = true;
+    correlation.update(({ computed }) => ({ computed, values: [] }));
     const controller = { aborted: false };
     correlationRequest = controller;
     const res = await db.request('correlation');
@@ -84,6 +88,8 @@ export const Query = {
         }
         correlationRequest.aborted = true;
         correlation.set({ computed: false, values: [] });
+        regressionRequest.aborted = true;
+        regression.set({ computed: false, r2: 0, values: [] });
         view.set(res[0]);
       } catch (e) {
         queryError.set((e as Error).message);
@@ -94,6 +100,22 @@ export const Query = {
 
 export const QueryError = {
   subscribe: queryError.subscribe,
+};
+
+let regressionRequest: { aborted: boolean } = { aborted: false };
+export const Regression = {
+  subscribe: regression.subscribe,
+  compute: async (x: string, y: string, type: 'exponential' | 'linear' | 'logarithmic' | 'power') => {
+    regressionRequest.aborted = true;
+    regression.update(({ computed }) => ({ computed, r2: 0, values: [] }));
+    const controller = { aborted: false };
+    regressionRequest = controller;
+    const res = await db.request('regression', { x, y, type });
+    if (controller.aborted) {
+      return;
+    }
+    regression.set({ computed: true, r2: res[1], values: res[0] });
+  },
 };
 
 export const View = {
