@@ -1,7 +1,6 @@
-import { parse as parseCSV } from 'csv-parse/browser/esm';
 import Regression from 'regression';
 import { Database, SqlJsStatic } from 'sql.js';
-import { read as readXLS, utils as XLSUtils } from 'xlsx';
+import { read as parse, utils as XLSUtils } from 'xlsx';
 
 let db: Database | null = null;
 let query = '';
@@ -108,26 +107,14 @@ function onModuleReady(SQL: SqlJsStatic) {
         reader.onerror = () => (
           reject(new Error('load: Error reading file'))
         );
-        if (file.type === 'text/csv') {
-          reader.onload = () => {
-            parseCSV(reader.result as string, { delimiter, trim: true }, (err, data) => {
-              if (err) {
-                reject(new Error(`load: ${err.message}`));
-                return;
-              }
-              resolve(data);
-            });
-          };
-          reader.readAsText(file);
-        } else {
-          reader.onload = () => {
-            const workbook = readXLS(reader.result, {
-              type: 'binary'
-            });
-            resolve(XLSUtils.sheet_to_json<any[][]>(workbook.Sheets[workbook.SheetNames[0]], { header: 1 }).map((row) => [...row]));
-          };
-          reader.readAsBinaryString(file);
-        }
+        reader.onload = () => {
+          const workbook = parse(reader.result, {
+            type: 'binary',
+            FS: delimiter,
+          });
+          resolve(XLSUtils.sheet_to_json<any[][]>(workbook.Sheets[workbook.SheetNames[0]], { defval: null, header: 1 }));
+        };
+        reader.readAsBinaryString(file);
       })
       .then((data) => {
         const columns = data[0].map((name: string, i: number) => (name || `unnamed_${i < 10 ? '0' : ''}${i}`));

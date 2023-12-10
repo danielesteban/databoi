@@ -8,7 +8,6 @@
   "dependencies": {
     "@sveltejs/svelte-virtual-list": "^3.0.1",
     "color-scales": "^3.0.2",
-    "csv-parse": "^5.5.3",
     "monaco-editor": "^0.45.0",
     "plotly.js-dist-min": "^2.27.1",
     "regression": "^2.0.1",
