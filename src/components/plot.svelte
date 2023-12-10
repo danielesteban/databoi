@@ -3,7 +3,10 @@
 
   const config: Partial<plotly.Config> = {
     displaylogo: false,
-    mapboxAccessToken: 'pk.eyJ1IjoiZGFuaWdhdHVuZXMiLCJhIjoiY2xwd21jd2J2MGcxcDJrbzk0bHAwMjlyOCJ9.yoSPGPhmUo9Z9fqOxOWqiQ',
+    mapboxAccessToken: (
+      // @ts-ignore
+      __MAPBOX_TOKEN__
+    ),
     modeBarButtonsToRemove: ['lasso2d', 'resetScale2d', 'select2d', 'toImage'],
     responsive: true,
   };

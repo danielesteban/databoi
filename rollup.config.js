@@ -22,6 +22,12 @@ const { compilerOptions: { paths: aliases } } = JSON.parse(fs.readFileSync(path.
 const production = !process.env.ROLLUP_WATCH;
 const outputPath = path.resolve(__dirname, 'dist');
 
+// @dani
+// This default token will only work under `localhost:8080` and `databoi.gatunes.com`.
+// Get your own token to use it under other origins at:
+// https://account.mapbox.com/access-tokens/
+const mapboxToken = process.env.MAPBOX_TOKEN || 'pk.eyJ1IjoiZGFuaWdhdHVuZXMiLCJhIjoiY2xwd21jd2J2MGcxcDJrbzk0bHAwMjlyOCJ9.yoSPGPhmUo9Z9fqOxOWqiQ';
+
 const getHash = (file) => (
   createHash('sha256').update(fs.readFileSync(path.join(__dirname, file))).digest('hex').slice(0, 8)
 );
@@ -94,6 +100,7 @@ export default {
     replace({
       preventAssignment: false,
       __FONT_PATH__: JSON.stringify('/' + Font.output),
+      __MAPBOX_TOKEN__: JSON.stringify(mapboxToken),
       __SQL_MODULE_PATH__: JSON.stringify('/' + SQL.module.output),
       __SQL_WASM_PATH__: JSON.stringify('/' + SQL.wasm.output),
     }),
