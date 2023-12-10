@@ -1,6 +1,7 @@
 <script lang="ts">
   // @ts-ignore
   import VirtualList from '@sveltejs/svelte-virtual-list';
+  import Download from 'components/download.svelte';
   import Editor from 'components/editor.svelte';
   import Split, { SplitMode } from 'components/split.svelte';
   import { Query, QueryError, View } from 'state/data';
@@ -36,7 +37,8 @@
     <div class="error">
       {$QueryError}
     </div>
-    <div>
+    <div class="status">
+      <Download />
       {$View.values.length} Results
     </div>
   </div>
@@ -57,19 +59,26 @@
     display: grid;
     grid-template-rows: auto 1fr;
   }
-  .error {
-    color: #933;
-  }
   .info {
     box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
     position: relative;
     z-index: 2;
     border-top: 1px solid #000;
     background: #222;
-    padding: 0.5rem 1.25rem;
+    padding: 0 1.25rem;
     color: #aaa;
     display: flex;
     justify-content: space-between;
+  }
+  .error {
+    display: flex;
+    align-items: center;
+    color: #933;
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   .columns, .row {
     display: grid;

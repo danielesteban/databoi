@@ -49,6 +49,10 @@ export const load = async (file: File, delimiter = ',', dropNull = true) => {
   view.set(res[1]);
 };
 
+export const dump = () => (
+  db.request('dump')
+);
+
 let correlationRequest: { aborted: boolean } = { aborted: false };
 export const Correlation = {
   subscribe: correlation.subscribe,

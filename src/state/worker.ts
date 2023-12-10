@@ -154,6 +154,17 @@ function onModuleReady(SQL: SqlJsStatic) {
         });
       });
     }
+    case 'dump':
+      if (!db) {
+        throw new Error('DB is not loaded');
+      }
+      return postMessage({
+        id: data.id,
+        results: [XLSUtils.sheet_to_csv(XLSUtils.json_to_sheet(view.values.map((v) => v.reduce((r, v, i) => {
+          r[view.columns[i]] = v;
+          return r;
+        }, {})), { header: view.columns }))],
+      });
     case 'query':
       setView(data.sql);
       return postMessage({

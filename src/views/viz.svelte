@@ -19,8 +19,8 @@
 <div class="viz">
   <div class="menu">
     <button on:click={setTab(Tab.distribution)} class:active={tab === Tab.distribution}>Distribution</button>
-    <button on:click={setTab(Tab.correlation)}  class:active={tab === Tab.correlation}>Correlation</button>
-    <button on:click={setTab(Tab.regression)}  class:active={tab === Tab.regression}>Regression</button>
+    <button on:click={setTab(Tab.correlation)} class:active={tab === Tab.correlation}>Correlation</button>
+    <button on:click={setTab(Tab.regression)} class:active={tab === Tab.regression}>Regression</button>
   </div>
   <div class="plots">
     {#if tab === Tab.correlation}
