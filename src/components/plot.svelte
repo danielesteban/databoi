@@ -28,14 +28,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-	export let center: plotly.MapboxCenter | undefined = undefined;
-	export let data: any[];
-	export let title: string | undefined = undefined;
+  export let center: plotly.MapboxCenter | undefined = undefined;
+  export let data: any[];
+  export let title: string | undefined = undefined;
 
-  let map: Partial<plotly.Mapbox> = { center, zoom: 4 };
-  let lastData: any[] = data;
-  let lastTitle: string | undefined = title;
-	let plot: HTMLElement;
+  let plot: HTMLElement;
+  const map: Partial<plotly.Mapbox> = { center, zoom: 4 };
 
   onMount(() => {
     plotly
@@ -50,6 +48,8 @@
     return () => plotly.purge(plot);
   });
 
+  let lastData: any[] = data;
+  let lastTitle: string | undefined = title;
   const update = (data: any[], title?: string) => {
     if (
       !plot
